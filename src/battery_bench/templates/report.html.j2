@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Battery Bench Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    h1 { margin-bottom: 0.2rem; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background: #f5f5f5; text-align: left; }
+    code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Battery Bench Report</h1>
+  <p><strong>Config name:</strong> {{ config.get('name', 'run') }}</p>
+  <div class="grid">
+    <div>
+      <h2>Metrics</h2>
+      <table>
+        <tr><th>Total Reward</th><td>{{ '%.4f'|format(metrics.get('total_reward', 0.0)) }}</td></tr>
+        <tr><th>Mean Reward</th><td>{{ '%.4f'|format(metrics.get('mean_reward', 0.0)) }}</td></tr>
+        <tr><th>Std Reward</th><td>{{ '%.4f'|format(metrics.get('std_reward', 0.0)) }}</td></tr>
+        <tr><th>Steps</th><td>{{ metrics.get('num_steps', 0) }}</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>Config</h2>
+      <pre><code>{{ config | tojson(indent=2) }}</code></pre>
+    </div>
+  </div>
+</body>
+</html>

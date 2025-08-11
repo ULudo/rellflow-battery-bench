@@ -1,0 +1,30 @@
+# reports
+reports
+
+# PyFmi files
+*.mat
+
+# IDE and python files
+.idea
+*.pytest_cache*
+*__pycache__*
+*.ipynb_checkpoints*
+.vscode
+
+# Pickle files
+*.pkl
+*.npz
+*.npy
+*.joblib
+
+# pictures
+*.png
+
+# database
+*.db
+
+# other
+*.zip
+
+*.egg-info
+*.egg

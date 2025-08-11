@@ -1,0 +1,26 @@
+data:
+  data_format: csv
+  datasets:
+  - house_data_file: ./res/data/opsd_building_6.csv
+    name: opsd_building_6
+    price_data_column: germany
+  price_data_file: ./res/data/ee_prices.csv
+environment:
+  action_space_type: continuous
+  battery:
+    capacity: 20000
+    efficiency: 0.95
+    max_power: 8000
+  dataset_args:
+    building: opsd_building_6
+    price: germany
+  episode_length: 86400
+  init_time: 1514847600
+  random_time_init: false
+  scaling_method: none
+  tax: 20
+model:
+  name: base
+n_eval_runs: 1
+name: base_controller
+out_dir: ./out
