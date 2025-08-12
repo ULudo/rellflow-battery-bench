@@ -3,7 +3,7 @@ from typing import Any, Dict, Tuple, List
 import gymnasium as gym
 
 from .env import BuildingEnv, BuildingDataManager
-from .env.consts_and_types import FormatType
+from .env.consts_and_types import FormatType, DATA_FREQUENCY
 from .control.controller import ControllerInfo
 
 
@@ -19,6 +19,14 @@ def make_env(cfg: Dict[str, Any]) -> gym.Env:
     BuildingDataManager.load_datasets(datasets, price_data_file, fmt)
 
     env_cfg = cfg.get("environment", {})
+    # Determine prediction horizon seconds from model.prediction_length if present
+    model_cfg = cfg.get("model", {})
+    prediction_length_val = model_cfg.get("prediction_length", 0)
+    prediction_length = int(prediction_length_val) if prediction_length_val is not None else 0
+    prediction_horizon_val = env_cfg.get("prediction_horizon", 0)
+    prediction_horizon_s = int(prediction_horizon_val) if prediction_horizon_val is not None else 0
+    if prediction_length and not prediction_horizon_s:
+        prediction_horizon_s = int(prediction_length) * DATA_FREQUENCY
     env = BuildingEnv(
         dataset_args=env_cfg.get("dataset_args"),
         battery_efficiency=env_cfg.get("battery", {}).get("efficiency", 0.95),
@@ -37,7 +45,7 @@ def make_env(cfg: Dict[str, Any]) -> gym.Env:
         load_stats=None,
         price_stats=None,
         pv_stats=None,
-        prediction_horizon=0,
+        prediction_horizon=prediction_horizon_s,
         action_space_type=env_cfg.get("action_space_type", "discrete"),
     )
     return env

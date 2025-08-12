@@ -7,7 +7,7 @@ from linopy import Model
 
 from ..env.consts_and_types import DATA_FREQUENCY
 from ..env.functions import s_to_hour
-from .controller import ControllerInterface
+from .controller import ControllerInterface, ControllerInfo
 
 
 class MPCOptimizer:
@@ -125,5 +125,11 @@ class PerfectMPController(ControllerInterface):
         opti_params = [soc] + [obs_dict[name] for name in ["loads", "prices", "gens"]]
         opti_params.append(info.get("episode", {}))
         return opti_params
+
+    # Protocol-compatible method used by the framework
+    def act(self, obs: Any, info: ControllerInfo):  # noqa: ANN401
+        # Prefer metadata dict if wrapped in ControllerInfo
+        meta_info: Dict[str, Any] = getattr(info, "metadata", {}) or {}
+        return self.step(cast(np.ndarray, np.array(obs)), meta_info)
 
 

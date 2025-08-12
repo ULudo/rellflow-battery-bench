@@ -20,10 +20,9 @@ environment:
     max_power: 8000
   scaling_method: "none"
   random_time_init: false
-  init_time: 1514847600  # 1514761200+86400
-  episode_length: 8290800 # 8463600-2*24*3600
+  init_time: null
+  episode_length: 86400
   action_space_type: 'continuous'
   tax: 20
-  dataset_args:
-    building: "opsd_building_6"
-    price: "germany"
+  prediction_horizon: null
+  dataset_args: null

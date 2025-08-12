@@ -148,6 +148,12 @@ def main(argv: list[str] | None = None) -> None:
             fig.tight_layout()
             fig.savefig(out_root / f"comparison_{dataset_name}.png", dpi=150)
 
+        # Compute improvements vs no_battery
+        # Reshape index_rows into dict by dataset -> controller -> summary
+        by_ds: dict[str, dict[str, dict]] = {}
+        for r in index_rows:
+            by_ds.setdefault(r["dataset"], {})[r["controller"]] = r
+
         # Write simple HTML index
         index_html = [
             "<!DOCTYPE html>",
@@ -164,12 +170,24 @@ def main(argv: list[str] | None = None) -> None:
             # table
             rows = [r for r in index_rows if r["dataset"] == dataset_name]
             if rows:
-                index_html.append("<table><tr><th>Controller</th><th>Total</th><th>Mean</th><th>Std</th><th>Steps</th><th>Report</th></tr>")
+                index_html.append("<table><tr><th>Controller</th><th>Total</th><th>Mean</th><th>Std</th><th>Steps</th><th>Improvement vs no_controller</th><th>Report</th></tr>")
+                base = by_ds.get(dataset_name, {}).get("no_battery")
                 for r in rows:
+                    improvement = "-"
+                    if base and base.get("total_reward") not in (0, None) and r["controller"] != "no_battery":
+                        try:
+                            base_val = float(base["total_reward"])
+                            current_val = float(r["total_reward"])
+                            # higher is better (less negative cost), percentage vs absolute baseline magnitude
+                            denom = abs(base_val) if abs(base_val) > 1e-9 else 1.0
+                            improvement_val = 100.0 * (current_val - base_val) / denom
+                            improvement = f"{improvement_val:+.1f}%"
+                        except Exception:
+                            improvement = "-"
                     index_html.append(
                         f"<tr><td>{r['controller']}</td><td>{r['total_reward']:.3f}</td>"
                         f"<td>{r['mean_reward']:.3f}</td><td>{r['std_reward']:.3f}</td><td>{r['num_steps']}</td>"
-                        f"<td><a href='{Path(r['report']).relative_to(out_root)}'>report</a></td></tr>"
+                        f"<td>{improvement}</td><td><a href='{Path(r['report']).relative_to(out_root)}'>report</a></td></tr>"
                     )
                 index_html.append("</table>")
         index_html.append("</body></html>")

@@ -182,6 +182,12 @@ class BuildingEnv(gym.Env):
             self.init_time = self._get_random_time(self.min_data_time, upper_bound())
         if not self.init_time:
             self.init_time = self.min_data_time
+        # Ensure python int type for time fields
+        if self.init_time is not None:
+            try:
+                self.init_time = int(self.init_time)
+            except Exception:
+                pass
         if not self.episode_length:
             assert self.max_data_time is not None, "Max data time must be set."
             assert self.init_time is not None, "Initial time must be set."
@@ -190,9 +196,21 @@ class BuildingEnv(gym.Env):
             self.episode_length is not None and self.episode_length > 0
         ), "Episode length must be greater than 0."
         assert self.init_time is not None, "Initial time must be set."
-        assert (
-            self.init_time <= upper_bound()
-        ), f"Episode length exceeds the available data range by {self.init_time - upper_bound()}s."
+        # If config provided a string like "96*900", safely evaluate integers and '*' expression
+        if isinstance(self.episode_length, str):
+            expr = self.episode_length.replace(" ", "")
+            if "*" in expr and all(part.isdigit() for part in expr.split("*")):
+                a, b = expr.split("*")
+                self.episode_length = int(a) * int(b)
+            elif expr.isdigit():
+                self.episode_length = int(expr)
+            else:
+                raise ValueError("episode_length must be an int or simple 'a*b' expression")
+        assert isinstance(self.episode_length, int)
+        assert isinstance(self.init_time, int)
+        assert self.init_time <= upper_bound(), (
+            f"Episode length exceeds the available data range by {self.init_time - upper_bound()}s."
+        )
 
     def _read_current_data_value(self, column: str) -> np.ndarray:
         assert isinstance(

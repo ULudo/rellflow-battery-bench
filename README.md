@@ -16,10 +16,52 @@ pip install -e .
 
 ## Quickstart
 ```bash
+# Install in editable mode
+pip install -e .
+
+# Run a single controller
 battery-bench run \
-  --config res/configs/base_controller.yml \
-  --controller battery_bench.baselines:NoBatteryController \
+  --config ./configs/rule_based.yml \
+  --controller rellflow_battery_bench.control:NoBatteryController \
   --out reports/example
+```
+
+## Full Benchmarks
+
+### Baselines across all three datasets (summer, autumn, spring)
+```bash
+battery-bench bench \
+  --config ./configs/rule_based.yml \
+  --out reports/eval
+```
+
+### Baselines + your controller across all datasets
+```bash
+battery-bench bench \
+  --config ./configs/rule_based.yml \
+  --user-controller yourpkg.module:YourController \
+  --out reports/eval_user
+```
+
+Example with the included demo controller:
+```bash
+battery-bench bench \
+  --config ./configs/rule_based.yml \
+  --user-controller scripts.test_controller:PVGreedyController \
+  --out reports/eval
+```
+
+This produces:
+- Per-dataset outputs under `reports/eval/<dataset>/<controller>/` with `metrics.csv`, `trajectory.csv`, `report.html`, and `rewards.png`.
+- Comparison plots in `reports/eval/comparison_<dataset>.png`.
+- An index file `reports/eval/index.html` with percentage improvements vs the `no_battery` baseline.
+
+### MPC (perfect foresight) benchmark
+```bash
+# Requires a linear solver (e.g., Gurobi) available to linopy
+battery-bench bench \
+  --config ./configs/mpc_perfect.yml \
+  --out reports/eval_mpc
 ```
 
 ## Controller Interface
