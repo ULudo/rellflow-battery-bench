@@ -17,3 +17,5 @@ def plot_reward_series(trajectory: List[Dict], out_png: str | None = None):
     if out_png:
         fig.savefig(out_png, dpi=150)
     return fig
+
+

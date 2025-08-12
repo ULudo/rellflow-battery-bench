@@ -4,6 +4,7 @@ import gymnasium as gym
 
 from .env import BuildingEnv, BuildingDataManager
 from .env.consts_and_types import FormatType
+from .control.controller import ControllerInfo
 
 
 def make_env(cfg: Dict[str, Any]) -> gym.Env:
@@ -44,7 +45,11 @@ def make_env(cfg: Dict[str, Any]) -> gym.Env:
 
 def run_episode(env: gym.Env, controller, info_meta: Dict[str, Any]) -> Tuple[Dict, list[Dict]]:
     obs, info = env.reset()
-    ctrl_info = {"metadata": info_meta, "config": {}}
+    # Construct initial ControllerInfo dataclass
+    ctrl_info = ControllerInfo(
+        config={},
+        metadata={**info_meta, "clean_obs": info.get("clean_obs"), "episode": info.get("episode")},
+    )
     if hasattr(controller, "reset"):
         controller.reset(obs, ctrl_info)  # type: ignore[arg-type]
     logs: list[Dict] = []
@@ -58,5 +63,12 @@ def run_episode(env: gym.Env, controller, info_meta: Dict[str, Any]) -> Tuple[Di
         row = dict(info)
         row["reward"] = float(reward)
         logs.append(row)
+        # Update ctrl_info for next decision
+        ctrl_info = ControllerInfo(
+            config=ctrl_info.config,
+            metadata={**ctrl_info.metadata, "clean_obs": info.get("clean_obs"), "episode": info.get("episode")},
+        )
     summary = {"total_reward": total_reward}
     return summary, logs
+
+

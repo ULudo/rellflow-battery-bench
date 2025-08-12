@@ -77,3 +77,5 @@ class PredictionModelSets:
     y_test: Optional[np.ndarray] = None
     scaler: Optional[StandardLike] = None
     aug_cols: Optional[List[int]] = None
+
+

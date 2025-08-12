@@ -13,24 +13,20 @@ from .consts_and_types import (
 
 
 def check_data_format_and_convert_to_feather(data_path: str, save_path: str) -> None:
-    # Check if the data file contains 'unixtime' as the first column
     df = pd.read_csv(data_path)
     if df.columns[0] != DataColumn.INDEX:
         raise ValueError(f"The first column must be '{DataColumn.INDEX}'")
 
-    # Read the data file with 'unixtime' as index
     df = pd.read_csv(data_path, index_col=DataColumn.INDEX)
     df.index = df.index.astype(int)
     df = df.sort_index()
 
-    # Check that data has a resolution of DATA_FREQUENCY
     time_diffs = df.index.to_series().diff().dropna()
     if not time_diffs.eq(DATA_FREQUENCY).all():
         raise ValueError(
             f"Data does not have a consistent frequency of {DATA_FREQUENCY} seconds."
         )
 
-    # Check that no data is missing between the first and last timestamp
     expected_times = np.arange(
         df.index.min(), df.index.max() + DATA_FREQUENCY, DATA_FREQUENCY
     )
@@ -38,7 +34,6 @@ def check_data_format_and_convert_to_feather(data_path: str, save_path: str) -> 
         missing_times = set(expected_times) - set(df.index.values)
         raise ValueError(f"Missing data at timestamps: {sorted(missing_times)}")
 
-    # Print data validity information
     total_hours = (df.index.max() - df.index.min()) / 3600
     print(f"Data valid: {total_hours} hours of data is available.")
     print("Statistics:")
@@ -55,7 +50,6 @@ def check_data_format_and_convert_to_feather(data_path: str, save_path: str) -> 
         )
     )
 
-    # Save data as Feather file in the save_path
     df.reset_index().to_feather(save_path)
 
 
@@ -86,7 +80,6 @@ class BuildingDataManager:
             name: (df.index.min(), df.index.max()) for name, df in cls.price_dfs.items()
         }
 
-        # Compute available data ranges for each combination
         cls._lookup_table = {}
         for b_name, (b_min, b_max) in building_time_ranges.items():
             for p_name, (p_min, p_max) in price_time_ranges.items():
@@ -100,24 +93,23 @@ class BuildingDataManager:
     def _set_df_dicts(
         cls,
         datasets: dict,
-        price_data_file: str,
+        price_data_file: Optional[str],
         format_type: FormatType,
         price_data_cols: Optional[List[str]] = None,
     ) -> None:
         cls._datasets = []
         for idx, (name, path) in enumerate(datasets.items()):
-            df_house = cls._load_data(format_type, path)
+            df = cls._load_data(format_type, path)
             if not cls.building_cols:
-                cls.building_cols = df_house.columns.to_list()
-            df_house = df_house[[DataColumn.LOAD, DataColumn.PV]]
-            cls.building_dfs[name] = df_house
-        df_price = cls._load_data(
-            format_type, price_data_file
-        )  # TODO: / 10.0 # EUR / MWh → ct / kWh (keep it for now to have higher prices)
-        cls.price_dfs = {
-            col: df_price[col].rename(str(DataColumn.PRICE)).to_frame().dropna()
-            for col in df_price.columns
-        }
+                cls.building_cols = df.columns.to_list()
+            df_sorted = df.sort_index()
+            # Ensure required columns exist; synthesize price if missing
+            if str(DataColumn.PRICE) not in df_sorted.columns:
+                df_sorted[str(DataColumn.PRICE)] = 0.0
+            cls.building_dfs[name] = df_sorted[[DataColumn.LOAD, DataColumn.PV]]
+            cls.price_dfs[name] = df_sorted[[DataColumn.PRICE]].rename(
+                columns={DataColumn.PRICE: str(DataColumn.PRICE)}
+            )
         if cls.price_dfs and not cls.price_cols:
             cls.price_cols = next(iter(cls.price_dfs.values())).columns.to_list()
 
@@ -125,7 +117,7 @@ class BuildingDataManager:
     def load_datasets(
         cls,
         datasets: dict,
-        price_data_file: str,
+        price_data_file: Optional[str],
         input_format: FormatType,
         price_data_cols: Optional[List[str]] = None,
     ) -> None:
@@ -215,3 +207,5 @@ class BuildingDataManager:
         cls.building_cols = []
         cls.price_cols = []
         cls._lookup_table = {}
+
+

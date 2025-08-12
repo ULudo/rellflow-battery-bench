@@ -63,7 +63,6 @@ class BuildingEnv(gym.Env):
     ) -> None:
         super(BuildingEnv, self).__init__()
 
-        # Typed attributes
         self.df_building: Optional[pd.DataFrame] = None
         self.min_data_time: Optional[int] = None
         self.max_data_time: Optional[int] = None
@@ -82,7 +81,6 @@ class BuildingEnv(gym.Env):
         self.init_soc = init_soc
         self.battery: Optional[Battery] = None
         self.action_space_type = action_space_type
-        # Gym expects these to be concrete spaces, not Optional
         self.action_space: spaces.Space
         self.observation_space: spaces.Space
         self.sim_start_time: Optional[int] = None
@@ -131,12 +129,10 @@ class BuildingEnv(gym.Env):
         battery_max_power: float,
         battery_capacity: float,
     ) -> None:
-        # SoC
         if self.random_soc_init:
             self.init_soc = self._gen_random_soc()
         if not (0 <= self.init_soc <= 1):
             raise ValueError("Initial SoC must be between 0 and 1.")
-        # Battery
         self.battery = Battery(
             dt=DATA_FREQUENCY,
             efficiency=battery_efficiency,
@@ -146,7 +142,6 @@ class BuildingEnv(gym.Env):
         )
 
     def _setup_spaces(self) -> None:
-        # Type of action space
         if self.action_space_type:
             try:
                 self.action_space_type_enum = ActionSpaceType[
@@ -156,7 +151,6 @@ class BuildingEnv(gym.Env):
                 raise ValueError(f"Invalid action space type: {self.action_space_type}")
         else:
             self.action_space_type_enum = ActionSpaceType.DISCRETE
-        # Action and observation space gym variables
         self.action_space = self._create_action_space()
         self.observation_space = self._create_observation_space()
 
@@ -378,16 +372,6 @@ class BuildingEnv(gym.Env):
         self.price_id = data.price_id
 
     def _determine_building_data(self) -> None:
-        """
-        Determine and set the building data for the environment.
-
-        If `dataset_args` are provided and `df_building` is not already set, the specified building and price data
-        will be retrieved from the `BuildingDataManager` and set in the environment. If `dataset_args` are not provided,
-        a random building and price data will be chosen from the `BuildingDataManager` and set in the environment.
-
-        Raises:
-            ValueError: If `dataset_args` is provided but is not a list or dictionary.
-        """
         if self.dataset_args and self.df_building is None:
             if isinstance(self.dataset_args, list):
                 data = BuildingDataManager.get_building_data(*self.dataset_args)
@@ -403,7 +387,6 @@ class BuildingEnv(gym.Env):
     def reset(self, seed=None, **kwargs) -> Tuple[np.ndarray, Dict]:
         super().reset(seed=seed)
         try:
-            # Init times
             self._determine_building_data()
             self._determine_init_time_and_episode_length()
             assert self.init_time is not None, "Initial time must be set."
@@ -412,11 +395,8 @@ class BuildingEnv(gym.Env):
             self.sim_stop_time = self.sim_start_time + DATA_FREQUENCY
             self.env_done_time = self.init_time + self.episode_length
 
-            # Get current environment state
             self.terminal = False
-            self.init_soc = (
-                self._gen_random_soc() if self.random_soc_init else self.init_soc
-            )
+            self.init_soc = self._gen_random_soc() if self.random_soc_init else self.init_soc
             assert self.battery is not None, "Battery is not initialized."
             self.battery.set_soc(self.init_soc)
             obs = self._next_observation(0.0)
@@ -438,7 +418,6 @@ class BuildingEnv(gym.Env):
         if self.terminal:
             raise RuntimeError("Environment terminated. Please reset the environment.")
         try:
-            # Convert potential ndarray action to scalar and ensure correct type
             raw_action = action
             if isinstance(raw_action, np.ndarray):
                 scalar = raw_action.item()
@@ -502,8 +481,8 @@ class BuildingEnv(gym.Env):
         if self.scaling_method_enum is not ScalingType.NONE:
             num_items = (
                 len(bat_vars_bounds)
-                + n_data_variables  # current time step
-                + n_prediction_steps * n_data_variables  # prediction steps
+                + n_data_variables
+                + n_prediction_steps * n_data_variables
                 + n_time_features
             )
             val = 1.0 if self.scaling_method_enum == ScalingType.NORMALIZE else 3.0
@@ -630,3 +609,5 @@ class BuildingEnv(gym.Env):
 
     def close(self) -> None:
         pass
+
+

@@ -1,15 +1,18 @@
-out_dir: "./out"
-name: "base_controller"
+name: no_controller
+out_dir: "./reports"
 n_eval_runs: 1
 data:
+  data_format: csv
   datasets:
-    - name: "opsd_building_6"
-      house_data_file: "./res/data/opsd_building_6.csv"
-      price_data_column: 'germany'
-  price_data_file: "./res/data/ee_prices.csv"
-  data_format: "csv"
+    - name: "summer"
+      house_data_file: "./data/benchmark/0080E1FA00236634.csv"
+    - name: "autumn"
+      house_data_file: "./data/benchmark/0080E1FA00236638.csv"
+    - name: "spring"
+      house_data_file: "./data/benchmark/0080E1FA00237198.csv"
+  price_data_file: null
 model:
-  name: 'base'
+  name: 'no_controller'
 environment:
   battery:
     efficiency: 0.95

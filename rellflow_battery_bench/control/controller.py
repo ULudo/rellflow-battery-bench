@@ -14,3 +14,5 @@ class ControllerInterface(Protocol):
 
     def act(self, obs: Any, info: ControllerInfo) -> Any:  # noqa: ANN401
         ...
+
+

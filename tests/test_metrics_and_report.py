@@ -1,5 +1,5 @@
-from battery_bench.metrics import summarize_rewards, final_soc
-from battery_bench.report import generate_all
+from rellflow_battery_bench.metrics import summarize_rewards, final_soc
+from rellflow_battery_bench.report import generate_all
 
 
 def test_metrics_and_report(tmp_path):

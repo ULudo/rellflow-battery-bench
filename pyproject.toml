@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Stand-alone benchmarking app for battery control algorithms against a building energy environment"
 authors = [ { name = "Battery Bench" } ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 license = { text = "MIT" }
 keywords = ["battery", "benchmark", "RL", "MPC", "energy", "grid", "gymnasium"]
 classifiers = [
@@ -15,29 +15,32 @@ classifiers = [
 ]
 
 dependencies = [
-  "numpy>=1.26",
-  "matplotlib>=3.8",
+  "numpy>=1.24",
+  "matplotlib>=3.7",
   "pyyaml>=6.0",
-  "pandas>=2.2",
+  "pandas>=2.0",
   "gymnasium>=0.29",
   "tabulate>=0.9",
   "linopy==0.5.5",
-  "xarray==2025.7.1",
+  "xarray>=2024.6.0,<2025.0.0",
+  "scipy>=1.10",
+  "jinja2>=3.1",
 ]
 
 [project.scripts]
-battery-bench = "rellflow-battery-bench.runner:main"
+battery-bench = "rellflow_battery_bench.runner:main"
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = {"" = "."}
 include-package-data = true
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["rellflow_battery_bench*"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"

@@ -25,3 +25,5 @@ def final_soc(trajectory: List[Dict]) -> float:
         except Exception:
             return 0.0
     return 0.0
+
+

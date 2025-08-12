@@ -23,7 +23,7 @@ class Battery:
 
     @property
     def soc(self):
-        return self._soc  # np.atleast_1d(self._soc)[0]
+        return self._soc
 
     def _validate_efficiency(self, efficiency):
         if not (0 < efficiency <= 1):
@@ -52,13 +52,12 @@ class Battery:
             else:
                 self._soc = v_soc
             assert self._soc <= 1.0, f"State of charge cannot exceed 1.0: {self._soc}"
-            assert (
-                self._soc <= v_soc
-            ), f"State of charge cannot decrease during charging: {self._soc} > {v_soc}"
+            assert self._soc <= v_soc, (
+                f"State of charge cannot decrease during charging: {self._soc} > {v_soc}"
+            )
         else:
             if self._soc <= 0.0:
                 return 0.0
-            # devided to get the actual energy from the battery that is need to get the disired energy demanded
             actual_energy = transferable_energy / self.efficiency
             v_soc = self._soc - actual_energy / self.capacity
             if v_soc < 0.0:
@@ -68,9 +67,9 @@ class Battery:
             else:
                 self._soc = v_soc
             assert self._soc >= 0.0, f"State of charge cannot be negative: {self._soc}"
-            assert (
-                self._soc >= v_soc
-            ), f"State of charge cannot increase during discharging: {self._soc} < {v_soc}"
+            assert self._soc >= v_soc, (
+                f"State of charge cannot increase during discharging: {self._soc} < {v_soc}"
+            )
         return transferable_energy if is_charge else -transferable_energy
 
     def discharge(self):
@@ -92,13 +91,11 @@ class Battery:
             energy = self.max_energy_from_power(action * self.max_power)
             return self._perform_energy_transfer(energy, is_charge=True)
         elif action < 0:
-            # removing the min restricition: min(load, self._soc * self.capacity)
-            # it should also be possible to sell electricity at certain time periods
             load_energy = self._soc * self.capacity
             energy = self.max_energy_from_power(abs(action) * self.max_power)
             total_discharge_energy = min(load_energy, energy)
-            return self._perform_energy_transfer(
-                total_discharge_energy, is_charge=False
-            )
+            return self._perform_energy_transfer(total_discharge_energy, is_charge=False)
         else:
             raise ValueError(f"Invalid action: {action}. Must be between -1.0 and 1.0.")
+
+

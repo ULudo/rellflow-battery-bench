@@ -30,13 +30,26 @@ class SimpleRuleBasedController(ControllerInterface):
         if len(self.price_hist) > self.window:
             self.price_hist.pop(0)
 
+        # Decide charge/discharge/idle
         if pv > load:
-            return 1
-        if len(self.price_hist) >= max(3, int(0.5 * self.window)):
+            decision = 1
+        elif len(self.price_hist) >= max(3, int(0.5 * self.window)):
             low_thr = float(np.quantile(self.price_hist, self.low_q))
             high_thr = float(np.quantile(self.price_hist, self.high_q))
             if price <= low_thr:
-                return 1
-            if price >= high_thr:
-                return 2
-        return 0
+                decision = 1
+            elif price >= high_thr:
+                decision = -1
+            else:
+                decision = 0
+        else:
+            decision = 0
+
+        # Map to action space
+        # Continuous: return -1..1; Discrete: map {-1,0,1} -> {2,0,1}? We use {-1,0,1} → {-1,0,1} and let env handle continuous
+        if isinstance(getattr(info, "metadata", {}), dict) and meta.get("action_space", "continuous") == "discrete":
+            return { -1: 2, 0: 0, 1: 1 }[decision]
+        else:
+            return float(decision)
+
+

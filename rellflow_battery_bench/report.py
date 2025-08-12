@@ -48,8 +48,11 @@ def render_html_report(out_dir: str, cfg: Dict[str, Any], trajectory: List[Dict]
     th {{ background: #f5f5f5; }}
     pre {{ background: #f9f9f9; padding: 8px; border: 1px solid #eee; }}
   </style>
+  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
+  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
+  <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap\" rel=\"stylesheet\">
 </head>
-<body>
+<body style=\"font-family: Inter, Arial, sans-serif;\">
   <h1>Battery Bench Report</h1>
   <p><strong>Config name:</strong> {cfg.get('name', 'run')}</p>
   <h2>Metrics</h2>
@@ -74,3 +77,5 @@ def generate_all(out_dir: str, cfg: Dict[str, Any], trajectory: List[Dict]) -> D
     write_csvs(out_dir, trajectory, summary)
     html_path = render_html_report(out_dir, cfg, trajectory, summary)
     return {"summary": summary, "html": html_path}
+
+

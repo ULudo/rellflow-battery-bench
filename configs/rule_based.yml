@@ -1,6 +1,5 @@
-name: mpc_perfect
+name: rule_based
 out_dir: ./reports
-n_eval_runs: 1
 data:
   data_format: csv
   datasets:
@@ -11,22 +10,19 @@ data:
     - name: "spring"
       house_data_file: "./data/benchmark/0080E1FA00237198.csv"
   price_data_file: null
-model:
-  name: 'mpc'
-  mpc_type: 'perfect'
-  prediction_length: 96
 environment:
+  action_space_type: continuous
   battery:
-    efficiency: 0.95
     capacity: 20000
+    efficiency: 0.95
     max_power: 8000
-  scaling_method: "none"
-  random_time_init: false
-  init_time: 1514847600  # 1514761200+86400
-  episode_length: 8377200 # 8463600-24*3600
-  action_space_type: 'continuous'
-  tax: 20
-  prediction_horizon: 86400
   dataset_args:
-    building: "opsd_building_6"
-    price: "germany"
+    building: "summer"
+    price: "summer"
+  episode_length: 86400
+  random_time_init: false
+  scaling_method: none
+  tax: 20
+model:
+  name: base
+n_eval_runs: 1

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    table { border-collapse: collapse; width: 100%; max-width: 520px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>{{ title }}</h1>
+  <h2>Summary</h2>
+  <table>
+    {% for key, value in summary.items() %}
+      <tr><th>{{ key }}</th><td>{{ value }}</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
+
+

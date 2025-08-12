@@ -1,4 +1,4 @@
-from battery_bench.controller import ControllerInterface, ControllerInfo
+from rellflow_battery_bench.control import ControllerInterface, ControllerInfo
 
 
 def test_controller_protocol_methods():

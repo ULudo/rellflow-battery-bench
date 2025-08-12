@@ -1,6 +1,9 @@
 from pathlib import Path
 import numpy as np
-import torch
+try:
+    import torch  # type: ignore
+except Exception:  # pragma: no cover - optional dependency
+    torch = None
 
 C_IN_K = 273.15
 KILO = 1000
@@ -59,10 +62,7 @@ def byte_to_gb(x):
 
 
 def cyclic_encode(value, trigonometric_fun, max_val):
-    if False:
-        x = value if value < max_val else max_val
-    else:
-        x = np.rint(value)
+    x = np.rint(value)
     trig = trigonometric_fun(2 * np.pi * x / max_val)
     return trig
 
@@ -92,6 +92,8 @@ def cos_encode_month(value, max_val=12):
 
 
 def get_device() -> str:
+    if torch is None:
+        return "cpu"
     return "cuda" if torch.cuda.is_available() else "cpu"
 
 
@@ -99,3 +101,5 @@ def check_path(path: str) -> str:
     if not Path(path).exists():
         raise FileNotFoundError(f"File {path} not found")
     return path
+
+
