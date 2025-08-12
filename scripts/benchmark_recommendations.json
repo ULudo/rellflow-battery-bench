@@ -1,0 +1,29 @@
+{
+  "Winter": {
+    "dataset": "file1",
+    "month": "2024-12",
+    "date_range": "2024-12-01 to 2024-12-31",
+    "records": 44640,
+    "mean_load_kw": 0.04696684620828143,
+    "max_load_kw": 2.099999999999796,
+    "min_load_kw": 0.0
+  },
+  "Spring": {
+    "dataset": "file1",
+    "month": "2025-03",
+    "date_range": "2025-03-01 to 2025-03-31",
+    "records": 44640,
+    "mean_load_kw": 0.04228091397849456,
+    "max_load_kw": 2.759999999999536,
+    "min_load_kw": 0.0
+  },
+  "Summer": {
+    "dataset": "file1",
+    "month": "2024-07",
+    "date_range": "2024-07-01 to 2024-07-31",
+    "records": 44640,
+    "mean_load_kw": 0.057104612369953844,
+    "max_load_kw": 1.5120000000007394,
+    "min_load_kw": 0.0
+  }
+}

@@ -1,3 +1,7 @@
+# hidden files
+.*
+!.gitignore
+
 # reports
 reports
 
