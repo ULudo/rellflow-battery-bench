@@ -21,9 +21,6 @@ reports
 *.npy
 *.joblib
 
-# pictures
-*.png
-
 # database
 *.db
 

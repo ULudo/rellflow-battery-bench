@@ -96,7 +96,7 @@ Following months were selected for battery benchmarking:
 - Total consumption: 42.49 kWh
 - Records: 2,976 (15-minute intervals)
 
-![Summer Load Profile](plots/0080E1FA00236634_load_profile.png)
+![Summer Load Profile](data/plots/0080E1FA00236634_load_profile.png)
 
 ### 2. Autumn Period - November 2024
 **Dataset ID:** `0080E1FA00236638`  
@@ -108,7 +108,7 @@ Following months were selected for battery benchmarking:
 - Total consumption: 50.65 kWh
 - Records: 2,880 (15-minute intervals)
 
-![Autumn Load Profile](plots/0080E1FA00236638_load_profile.png)
+![Autumn Load Profile](data/plots/0080E1FA00236638_load_profile.png)
 
 ### 3. Spring Period - April 2025
 **Dataset ID:** `0080E1FA00237198`  
@@ -120,7 +120,7 @@ Following months were selected for battery benchmarking:
 - Total consumption: 42.92 kWh
 - Records: 2,880 (15-minute intervals)
 
-![Spring Load Profile](plots/0080E1FA00237198_load_profile.png)
+![Spring Load Profile](data/plots/0080E1FA00237198_load_profile.png)
 
 ### Data Format
 
