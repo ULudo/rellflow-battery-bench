@@ -5,14 +5,6 @@ import numpy as np
 from .controller import ControllerInterface, ControllerInfo
 
 
-class NoBatteryController(ControllerInterface):
-    def reset(self, obs: Any, info: ControllerInfo) -> None:  # noqa: ANN401
-        return None
-
-    def act(self, obs: Any, info: ControllerInfo):  # noqa: ANN401
-        return 0
-
-
 class SimpleRuleBasedController(ControllerInterface):
     def __init__(self, window: int = 24, low_q: float = 0.4, high_q: float = 0.6):
         self.window = window

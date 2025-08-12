@@ -1,12 +1,5 @@
 import sys
 from pathlib import Path
-
-# Ensure monorepo root is on sys.path so `rellflow` can be imported when running in-place
-_this_file = Path(__file__).resolve()
-repo_root = _this_file.parents[3]  # .../ReLLFloW
-if str(repo_root) not in sys.path:
-    sys.path.insert(0, str(repo_root))
-
 import importlib
 import json
 from argparse import ArgumentParser

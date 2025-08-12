@@ -2,8 +2,8 @@ from typing import Any, Dict, Tuple, List
 
 import gymnasium as gym
 
-from rellflow.env import BuildingEnv, BuildingDataManager
-from rellflow.util.consts_and_types import FormatType
+from .env import BuildingEnv, BuildingDataManager
+from .env.consts_and_types import FormatType
 
 
 def make_env(cfg: Dict[str, Any]) -> gym.Env:

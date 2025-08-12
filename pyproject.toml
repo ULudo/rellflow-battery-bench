@@ -1,7 +1,7 @@
 [project]
 name = "battery-bench"
 version = "0.1.0"
-description = "Stand-alone benchmarking app for battery control algorithms against the ReLLFloW building energy environment"
+description = "Stand-alone benchmarking app for battery control algorithms against a building energy environment"
 authors = [ { name = "Battery Bench" } ]
 readme = "README.md"
 requires-python = ">=3.12"
@@ -21,6 +21,8 @@ dependencies = [
   "pandas>=2.2",
   "gymnasium>=0.29",
   "tabulate>=0.9",
+  "linopy==0.5.5",
+  "xarray==2025.7.1",
 ]
 
 [project.scripts]

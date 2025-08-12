@@ -1,6 +1,6 @@
 # ReLLFloW Battery Bench
 
-Benchmarking app for battery control algorithms (rule-based, MPC, RL) against the ReLLFloW building energy environment.
+Benchmarking app for battery control algorithms (rule-based, MPC, RL) against the a building energy environment.
 
 Features
 - Simple controller interface (`battery_bench.controller.Interface`)
